@@ -4,7 +4,7 @@ The purpose of this project is to compare the running times of the same algorith
 
 Hardware used for the results:
  - AMD Ryzen 7 5800x @ 3.8 GHz
- - Trident Z Neo 3600 MHz 16-19-19-39
+ - Trident Z Neo 32 GB, 3600 MHz, 16-19-19-39
 
 OS: Win11
 
