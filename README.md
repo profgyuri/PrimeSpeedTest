@@ -1,6 +1,6 @@
 # PrimeSpeedTest
 
-The purpose of this project is to compare the running times of different languages. The code calculates the firs n prime numbers.
+The purpose of this project is to compare the running times of the same algorithm on different languages. The code calculates the firs n prime numbers.
 
 Hardware used for the results:
  - AMD Ryzen 7 5800x @ 3.8 GHz
