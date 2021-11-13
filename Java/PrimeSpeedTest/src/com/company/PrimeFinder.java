@@ -5,6 +5,16 @@ import java.util.List;
 
 public class PrimeFinder {
     private List<Long> primes;
+    private long start;
+
+    public PrimeFinder()
+    {
+        start = System.currentTimeMillis();
+
+        primes = new ArrayList<>();
+        primes.add((long)2);
+        primes.add((long)3);
+    }
 
     private boolean isPrime(long number)
     {
@@ -35,9 +45,6 @@ public class PrimeFinder {
 
     public List<Long> CalculateFirstNPrimes(int count)
     {
-        primes = new ArrayList<>();
-        primes.add((long)2);
-        primes.add((long)3);
         int counter = primes.size();
         long current = primes.get(primes.size() - 1) + 1;
         while (current % 6 != 0)
@@ -66,6 +73,12 @@ public class PrimeFinder {
             }
 
             current += 6;
+
+            //if we reach the 10 minutes then just stop
+            if (System.currentTimeMillis() - start >= 600_000)
+            {
+                return primes;
+            }
         }
 
         return primes;
