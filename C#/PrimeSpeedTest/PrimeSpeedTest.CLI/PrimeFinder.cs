@@ -63,7 +63,7 @@ internal class PrimeFinder
     private bool IsPrime(ulong number)
     {
         //If the input is the last of the primes list just return false or it may be added again.
-        if (number == _primes[^1])
+        if (number == _primes[_currentPosition - 1])
         {
             return false;
         }
