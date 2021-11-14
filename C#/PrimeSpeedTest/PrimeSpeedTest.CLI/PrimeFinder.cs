@@ -1,33 +1,49 @@
 ﻿namespace PrimeSpeedTest.CLI;
 using System;
-using System.Collections.Generic;
+using System.Globalization;
 
 internal class PrimeFinder
 {
-    private List<ulong> _primes = new() { 2, 3 };
+    private ulong[] _primes;
+    private DateTime _start;
+    private int _timeoutMinutes = 10;
+    private int _currentPosition;
 
-    public List<ulong> CalculateFirstNPrimes(int count)
+    public PrimeFinder()
     {
-        int counter = _primes.Count;
-        ulong current = _primes[^1] + 1;
+        _start = DateTime.Now;
+
+        _primes = new ulong[50_000_000];
+        _primes[0] = 2;
+        _primes[1] = 3;
+        _currentPosition = 2;
+    }
+
+    public string CalculateFirstNPrimes(int count)
+    {
+        if (DateTime.Now - _start >= TimeSpan.FromMinutes(_timeoutMinutes))
+        {
+            return null;
+        }
+
+        ulong current = _primes[_currentPosition - 1] + 1;
 
         while (current % 6 != 0)
         {
             current += 2;
         }
 
-        while (counter < count)
+        while (_currentPosition < count)
         {
             ulong lower = current - 1;
             ulong higher = current + 1;
 
             if (IsPrime(lower))
             {
-                _primes.Add(lower);
-                counter++;
+                _primes[_currentPosition++] = lower;
 
                 //If we have the desired number of primes, we don't have to check the higher.
-                if (counter == count)
+                if (_currentPosition == count)
                 {
                     break;
                 }
@@ -35,14 +51,13 @@ internal class PrimeFinder
 
             if (IsPrime(higher))
             {
-                _primes.Add(higher);
-                counter++;
+                _primes[_currentPosition++] = higher;
             }
 
             current += 6;
         }
 
-        return _primes;
+        return $"{DateTime.Now - _start:mm':'ss'.'ff} - {_currentPosition.ToString("N", CultureInfo.InvariantCulture)}";
     }
 
     private bool IsPrime(ulong number)
@@ -53,7 +68,7 @@ internal class PrimeFinder
             return false;
         }
 
-        for (int i = 0; i < _primes.Count; i++)
+        for (int i = 0; i < _currentPosition; i++)
         {
             ulong prime = _primes[i];
 
