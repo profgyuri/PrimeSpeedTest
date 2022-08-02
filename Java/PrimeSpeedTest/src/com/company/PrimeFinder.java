@@ -4,83 +4,86 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PrimeFinder {
-    private List<Long> primes;
-    private long start;
+    private final List<Long> primes;
+    private Long sqrtBase;
 
     public PrimeFinder()
     {
-        start = System.currentTimeMillis();
-
         primes = new ArrayList<>();
         primes.add((long)2);
         primes.add((long)3);
+
+        sqrtBase = 2L;
     }
 
-    private boolean isPrime(long number)
-    {
-        int primesSize = primes.size();
-
-        if(number == primes.get(primesSize - 1))
+    private void SetSqrtBase(Long number){
+        if (number - sqrtBase * sqrtBase > sqrtBase + sqrtBase)
         {
-            return false;
+            sqrtBase++;
         }
+    }
 
-        for (int i = 0; i < primesSize; i++)
-        {
-            long prime = primes.get(i);
-
-            if (number % prime == 0)
-            {
-                return false;
+    private void CheckIfPrime(long number) {
+        SetSqrtBase(number);
+        //We skip number 2 and 3 from checking, since we don't need it based on the 6-step idea,
+        //also we don't need to go above the square root of the number.
+        for (int i = 2; i < primes.size(); i++) {
+            //If the remainder of division with any prime equals to 0, the checked number is not a prime.
+            if (number % primes.get(i) == 0) {
+                return;
             }
 
-            if(prime > Math.sqrt(number))
-            {
+            if (primes.get(i) > sqrtBase) {
                 break;
             }
         }
 
-        return true;
+        primes.add(number);
     }
 
-    public List<Long> CalculateFirstNPrimes(int count)
+    private long GetCurrent()
     {
-        int counter = primes.size();
-        long current = primes.get(primes.size() - 1) + 1;
-        while (current % 6 != 0)
+        long current = primes.get(primes.size() - 1);
+        //make the current number equal to the next number divisible by 6
+        current += 6 - current % 6;
+
+        if (current - 1 == primes.get(primes.size() - 1))
         {
-            current += 2;
-        }
-
-        while (counter < count)
-        {
-            long lower = current - 1;
-            long higher = current + 1;
-
-            if (isPrime(lower))
-            {
-                primes.add(lower);
-                counter++;
-            }
-            if (counter == count)
-            {
-                break;
-            }
-            if (isPrime(higher))
-            {
-                primes.add(higher);
-                counter++;
-            }
-
+            CheckIfPrime(current + 1);
             current += 6;
-
-            //if we reach the 10 minutes then just stop
-            if (System.currentTimeMillis() - start >= 600_000)
-            {
-                return primes;
-            }
         }
 
-        return primes;
+        return current;
+    }
+
+    public void CalculateFirstNPrimes(int n)
+    {
+        if (primes.size() >= n)
+        {
+            return;
+        }
+
+        //To continue calculation from the last prime already in the list.
+        long current = GetCurrent();
+
+        while (primes.size() < n)
+        {
+            CheckIfPrime(current - 1);
+            //not checking if we have the correct amount here sacrifices precision in favor of speed
+            CheckIfPrime(current + 1);
+
+            //increasing the current base value, taking into account that every prime number is next to a multiple of 6
+            current += 6;
+        }
+
+        if (primes.size() > n)
+        {
+            primes.remove(primes.size() - 1);
+        }
+    }
+
+    public int GetCalculatedPrimesLength()
+    {
+        return primes.size();
     }
 }

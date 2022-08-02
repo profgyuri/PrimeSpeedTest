@@ -1,25 +1,28 @@
 package com.company;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 public class Main {
 
     public static void main(String[] args) {
         PrimeFinder finder = new PrimeFinder();
-        long start = System.currentTimeMillis();
+        int[] intervals = new int[] {
+                100_000,
+                200_000,
+                500_000,
+                1_000_000,
+                2_000_000,
+                5_000_000,
+                10_000_000,
+                20_000_000,
+                50_000_000,
+                100_000_000
+        };
+        long start = System.nanoTime();
 
-        //return after 1 sec
-        finder.CalculateFirstNPrimes(1_000_000);
-        System.out.println(System.currentTimeMillis() - start + " ms");
-        //return after ~3.6 seconds
-        finder.CalculateFirstNPrimes(2_000_000);
-        System.out.println(System.currentTimeMillis() - start + " ms");
-        //return after ~13.6 seconds
-        finder.CalculateFirstNPrimes(5_000_000);
-        System.out.println(System.currentTimeMillis() - start + " ms");
-        //return after ~40.3 seconds
-        finder.CalculateFirstNPrimes(10_000_000);
-        System.out.println(System.currentTimeMillis() - start + " ms");
+        for (int interval:
+                intervals) {
+            finder.CalculateFirstNPrimes(interval);
+            // print out formatted time since start
+            System.out.printf("%d: %.2f seconds\n", interval, (System.nanoTime() - start) / 1_000_000_000.0);
+        }
     }
 }
