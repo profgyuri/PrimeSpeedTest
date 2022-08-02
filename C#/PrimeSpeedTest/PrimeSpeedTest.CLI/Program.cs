@@ -1,7 +1,8 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using System.Diagnostics;
 using PrimeSpeedTest.CLI;
 
-var startTime = DateTime.Now;
+Stopwatch _stopwatch = new();
+
 var intervals = new int[] { 
     100_000,
     200_000,
@@ -11,14 +12,15 @@ var intervals = new int[] {
     5_000_000,
     10_000_000,
     20_000_000,
-    50_000_000
+    50_000_000,
+    100_000_000
 };
 PrimeFinder primeFinder = new();
+List<string> list = new();
+_stopwatch.Start();
 
-for (int i = 0; i < intervals.Length; i++)
+foreach (var item in intervals)
 {
-    if (primeFinder.CalculateFirstNPrimes(intervals[i]) is string result)
-    {
-        Console.WriteLine(result);
-    }
+    primeFinder.CalculateFirstNPrimes(item);
+    Console.WriteLine($"{item:n0} - {_stopwatch.Elapsed:mm':'ss'.'fff} - {primeFinder.GetCalculatedPrimesLength()}");
 }

@@ -1,91 +1,96 @@
 ﻿namespace PrimeSpeedTest.CLI;
-using System;
-using System.Globalization;
 
 internal class PrimeFinder
 {
-    private ulong[] _primes;
-    private DateTime _start;
-    private int _timeoutMinutes = 10;
-    private int _currentPosition;
+    private List<long> _primes;
+    private long _sqrtBase;
 
     public PrimeFinder()
     {
-        _start = DateTime.Now;
-
-        _primes = new ulong[50_000_000];
-        _primes[0] = 2;
-        _primes[1] = 3;
-        _currentPosition = 2;
+        _primes = new() { 2, 3 };
+        _sqrtBase = 2;
     }
 
-    public string CalculateFirstNPrimes(int count)
+    /// <summary>
+    /// We only need to compare the integer part of the square root.
+    /// Only marginally, but faster than Math.Sqrt <br/>
+    /// For the logic of this method see: https://youtu.be/PJHtqMjrStk
+    /// </summary>
+    /// <param name="number"></param>
+    private void SetSqrtBase(long number)
     {
-        if (DateTime.Now - _start >= TimeSpan.FromMinutes(_timeoutMinutes))
+        if (number - _sqrtBase * _sqrtBase > _sqrtBase + _sqrtBase)
         {
-            return null;
+            _sqrtBase++;
         }
+    }
 
-        ulong current = _primes[_currentPosition - 1] + 1;
+    private long GetCurrent()
+    {
+        long current = _primes[^1];
+        //make the current number equal to the next number divisible by 6
+        current += 6 - current % 6;
 
-        while (current % 6 != 0)
+        if (current - 1 == _primes[^1])
         {
-            current += 2;
-        }
-
-        while (_currentPosition < count)
-        {
-            ulong lower = current - 1;
-            ulong higher = current + 1;
-
-            if (IsPrime(lower))
-            {
-                _primes[_currentPosition++] = lower;
-
-                //If we have the desired number of primes, we don't have to check the higher.
-                if (_currentPosition == count)
-                {
-                    break;
-                }
-            }
-
-            if (IsPrime(higher))
-            {
-                _primes[_currentPosition++] = higher;
-            }
-
+            CheckIfPrime(current + 1);
             current += 6;
         }
 
-        return $"{DateTime.Now - _start:mm':'ss'.'ff} - {_currentPosition.ToString("N", CultureInfo.InvariantCulture)}";
+        return current;
     }
 
-    private bool IsPrime(ulong number)
+    private void CheckIfPrime(long number)
     {
-        //If the input is the last of the primes list just return false or it may be added again.
-        if (number == _primes[_currentPosition - 1])
+        SetSqrtBase(number);
+        //We skip number 2 and 3 from checking, since we don't need it based on the 6 step idea.
+        //Also we don't need to go above the square root of the number.
+        for (int i = 2; i < _primes.Count; i++)
         {
-            return false;
-        }
-
-        for (int i = 0; i < _currentPosition; i++)
-        {
-            ulong prime = _primes[i];
-
             //If the remainder of division with any prime equals to 0, the checked number is not a prime.
-            if (number % prime == 0)
+            if (number % _primes[i] == 0)
             {
-                return false;
+                return;
             }
 
-            //If we can't find a prime divisor below the square root of the number, then we won't find above. (src: https://www.youtube.com/watch?v=lJ3CD9M3nEQ)
-            if (prime > Math.Sqrt(number))
+            if (_primes[i] > _sqrtBase)
             {
                 break;
             }
         }
 
-        //If we don't get 0 as remainder for any of the currently existing primes, the number is prime.
-        return true;
+        //If we don't get 0 as remainder, the number is prime.
+        _primes.Add(number);
+    }
+
+    public void CalculateFirstNPrimes(int n)
+    {
+        if (_primes.Count >= n)
+        {
+            return;
+        }
+
+        //To continue calculation from the last prime already in the list.
+        long current = GetCurrent();
+
+        while (_primes.Count < n)
+        {
+            CheckIfPrime(current - 1);
+            //not checking if we have the correct amount here sacrifices precision in favor of speed
+            CheckIfPrime(current + 1);
+
+            //increasing the current base value, taking into account that every prime number is next to a multiple of 6
+            current += 6;
+        }
+
+        if (_primes.Count > n)
+        {
+            _primes.RemoveAt(_primes.Count - 1);
+        }
+    }
+
+    public int GetCalculatedPrimesLength()
+    {
+        return _primes.Count;
     }
 }
