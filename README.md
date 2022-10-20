@@ -21,3 +21,10 @@ Kotlin         |00:00.06  |00:00.15  |00:00.49  |00:01.25    |00:03.32    |00:12
 Python         |00:01.46  |00:03.90  |00:14.54  |00:39.60    |01:48.21    |06:47.92    |18:34.58     |DNF          |DNF          |DNF
 
 All these results move somewhere near these times, and are not exact at all (as background tasks may chenge the values with a very small amount) but give a good idea of the real running time.
+
+## Rules
+ - Only object oriented languages are allowed!
+ - The primeFinder class must be in a seperate file from the main method!
+ - Only vanilla code allowed (no 3rd party libraries)!
+ 
+If you want to see how an other, not yet listed language would perform, send a PR or just simply contact me (profgyuri@gmail.com) and I'll try my best to translate the code.
