@@ -23,6 +23,8 @@ Python         |00:01.46  |00:03.90  |00:14.54  |00:39.60    |01:48.21    |06:47
 
 All these results move somewhere near these times, and are not exact at all (as background tasks may chenge the values with a very small amount) but give a good idea of the real running time.
 
+Also important to note, that I'm not an expert in unmanaged languages, so it is possible to make the code better, but the learning curve is simply too steep to justify the cause of optimization for this relatively small project.
+
 ## Rules
  - Only object oriented languages are allowed!
  - The primeFinder class must be in a seperate file from the main method!
